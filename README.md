@@ -8,7 +8,7 @@ The world's magic is fading, and you, a young apprentice, are tasked with collec
 - You have various tools at your disposal that will help you advance in each stage: Including a fireball spell to melt ice/enemies and hit far away switches, a teleport spell to jumps gaps and lava, an explosion spell to hit multiple enemies, and a barrier spell that protects against enemies and miasma.
 - The game automatically saves your progress inside the game folder, at '/assets/saves/save.json', and automatically loads your progress on game start. If you wish to reset your progress, simply delete the .json file.
 
-# Controls:
+# Controls
 - Z - Slash
 - X - Fireball
 - C - Explosion
@@ -25,7 +25,7 @@ The world's magic is fading, and you, a young apprentice, are tasked with collec
 - Dynamic enemy roaming system
 - Automatic progress saving
 
-# How to run:
+# How to run
 1. Download the game folder.
 2. Install the PyGame Python library using the method appropriate to your OS.
 3. Find the "main.py" file in the root folder and run it.
