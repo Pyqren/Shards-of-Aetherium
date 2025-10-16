@@ -1,0 +1,39 @@
+Fonts:
+-------
+https://www.dafont.com/
+
+Logos:
+-------
+https://www.brandcrowd.com
+
+Story BG Image:
+-------
+https://www.inprnt.com/gallery/kromtec/
+
+Music & SFXs:
+-------
+https://www.fesliyanstudios.com/royalty-free-music
+https://pixabay.com/sound-effects/
+
+
+Sprites:
+--------
+https://otterisk.itch.io/hana-caraka-dungeon-mining
+https://craftpix.net/freebies/free-swordsman-1-3-level-pixel-top-down-sprite-character-pack/
+https://craftpix.net/freebies/free-slime-mobs-pixel-art-top-down-sprite-pack/
+https://craftpix.net/freebies/free-top-down-orc-game-character-pixel-art/
+https://craftpix.net/freebies/free-vampire-4-direction-pixel-character-sprite-pack/
+https://virusystem.itch.io/animation-portal
+https://gerald-burke.itch.io/geralds-keys
+https://wenrexa.itch.io/laser2020
+https://jan-schneider.itch.io/color-switches
+https://x.com/Rappenem
+https://haladrias.itch.io/winter-pixel-art-asset-pack
+https://nitca.itch.io/animated-smoke-sprite
+https://twitter.com/ArtisticCarCras
+
+Gen AI:
+--------
+Model: Chat GPT-5
+Prompt: "Create a 1280 x 720 pixel art image of a brunette squire holding a crystal."
+Result: credits.png
