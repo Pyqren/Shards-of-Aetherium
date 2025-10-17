@@ -2,7 +2,7 @@
 The world's magic is fading, and you, a young apprentice, are tasked with collecting five ancient crystals scattered across the land. These crystals are the key to restoring magic to the world. You start out in your Master's tower, at the top room where he studies. This is your hub area. In it are 5 portals: 1 open, 4 locked. Each portal houses a crystal, defended by enemies and locked behind a door. Collect all 5 crystals, and restore magic to the world!
 
 # Gameplay
-- Action Role-Playing game, where you play the role of a young squire. You swing a weapon or cast a spell to defeat enemies in your way to collect the crystal in each stage. 
+- Action Adventure game, where you play the role of a young squire. You swing a weapon or cast a spell to defeat enemies in your way to collect the crystal in each stage. 
 - Each stage is a dungeon filled with enemies and a door leading to a crystal. 
 - Each stage is a different visual environment: 1st is basic plains with slime enemies, 2nd is ice with slippery floor and ice enemies, etc.
 - You have various tools at your disposal that will help you advance in each stage: Including a fireball spell to melt ice/enemies and hit far away switches, a teleport spell to jumps gaps and lava, an explosion spell to hit multiple enemies, and a barrier spell that protects against enemies and miasma.
