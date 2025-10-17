@@ -4,6 +4,9 @@
 #   Settings    #
 ###############
 
+import os
+ROOT_PATH = os.path.dirname(__file__) # ensures pathing is independent of folder location
+
 # General
 WIN_WIDTH = 640
 WIN_HEIGHT = 480
@@ -15,8 +18,8 @@ FPS = 60
 FADE_DURATION = 1500  # Fade duration in milliseconds
 SPLASH_SCREEN_DURATION = 3000  # How long the logo stays on screen (3 seconds max)
 SCROLLING_TEXT_DURATION = 100000  # How long the scrolling text screen lasts (100 secs max)
-SCROLLING_TEXT_SPEED = 0.3
-SCROLLING_TEXT_SPEED_FAST = 1.5
+SCROLLING_TEXT_SPEED = 0.6
+SCROLLING_TEXT_SPEED_FAST = 2.7
 SKIP_THRESHOLD_MS = 200 # Time in milliseconds to distinguish a click from a hold
 TEXT_BORDER_THICKNESS = 2
 GROUND_LAYER = 0
@@ -25,7 +28,7 @@ ENEMY_LAYER = 2
 PLAYER_LAYER = 3
 
 # Texts and Saves
-SAVE_FILEPATH = "./assets/saves/save.json"
+SAVE_FILEPATH = os.path.join(ROOT_PATH, "assets", "saves/save.json")
 STAGE_HINTS = {
             1: "Find and hit (Z) all switches to open the door leading to the crystal. Look out for enemies!",
             2: "Brrr! It's c-c-cold! By the way, your spells are for more than just defeating enemies. Did you know fire (X) melts ice? Watch out for slippery floors!",
@@ -70,7 +73,10 @@ CREDITS = [
     "",
     "Your name will be the first legend spoken of in this glorious era.",
     "",
-    "====================================",
+    "",
+    "",
+    "",
+    "CREDITS",
     "",
     "A PYQREN PRODUCTION",
     "Developed by Abdullah Al Miqren",
@@ -88,6 +94,7 @@ CREDITS = [
     "BrandCrowd",
     "InPrnt",
     "ChatGPT"
+    "",
     "",
     "MUSIC",
     "Fesliyan Studios",
@@ -162,85 +169,85 @@ PURPLE = (10, 2, 26)
 ###############
 
 # Fonts
-MINECRAFTIA = './assets/fonts/Minecraft.ttf' # Pixel
-MINECRAFTIA_REGULAR = './assets/fonts/Minecraftia_Regular.ttf' # Pixel
-DAYDREAM = './assets/fonts/Daydream.otf' # Cartoony
-PLANES_VALMORE = './assets/fonts/Planes_ValMore.ttf'
-PIXELMAX = './assets/fonts/Pixelmax-Regular.otf'
+MINECRAFTIA = os.path.join(ROOT_PATH, "assets", 'fonts/Minecraft.ttf') # Pixel
+MINECRAFTIA_REGULAR = os.path.join(ROOT_PATH, "assets", 'fonts/Minecraftia_Regular.ttf') # Pixel
+DAYDREAM = os.path.join(ROOT_PATH, "assets", 'fonts/Daydream.otf') # Cartoony
+PLANES_VALMORE = os.path.join(ROOT_PATH, "assets", 'fonts/Planes_ValMore.ttf')
+PIXELMAX = os.path.join(ROOT_PATH, "assets", 'fonts/Pixelmax-Regular.otf')
 
 # Images
-STUDIO_LOGO_IMAGE = './assets/img/logo.png'
-INTRO_IMAGE = './assets/img/tower.png'
-CREDITS_IMAGE = './assets/img/credits.png'
-MENU = './assets/img/main_menu.png'
-GAMEOVER = './assets/img/gameover.png'
-CONTROLS = './assets/img/icons/controls.png'
-CONTROLS_CLICKED = './assets/img/icons/controls_clicked.png'
-LOADING_1 = './assets/img/icons/Loading_1.png'
-LOADING_2 = './assets/img/icons/Loading_2.png'
-LOADING_3 = './assets/img/icons/Loading_3.png'
-LOADING_4 = './assets/img/icons/Loading_4.png'
-LOADING_5 = './assets/img/icons/Loading_5.png'
-VICTORY = './assets/img/icons/victory.png'
-CLEAR = './assets/img/icons/clear.png'
+STUDIO_LOGO_IMAGE = os.path.join(ROOT_PATH, "assets", 'img/logo.png')
+INTRO_IMAGE = os.path.join(ROOT_PATH, "assets", 'img/tower.png')
+CREDITS_IMAGE = os.path.join(ROOT_PATH, "assets", 'img/credits.png')
+MENU = os.path.join(ROOT_PATH, "assets", 'img/main_menu.png')
+GAMEOVER = os.path.join(ROOT_PATH, "assets", 'img/gameover.png')
+CONTROLS = os.path.join(ROOT_PATH, "assets", 'img/icons/controls.png')
+CONTROLS_CLICKED = os.path.join(ROOT_PATH, "assets", 'img/icons/controls_clicked.png')
+LOADING_1 = os.path.join(ROOT_PATH, "assets", 'img/icons/Loading_1.png')
+LOADING_2 = os.path.join(ROOT_PATH, "assets", 'img/icons/Loading_2.png')
+LOADING_3 = os.path.join(ROOT_PATH, "assets", 'img/icons/Loading_3.png')
+LOADING_4 = os.path.join(ROOT_PATH, "assets", 'img/icons/Loading_4.png')
+LOADING_5 = os.path.join(ROOT_PATH, "assets", 'img/icons/Loading_5.png')
+VICTORY = os.path.join(ROOT_PATH, "assets", 'img/icons/victory.png')
+CLEAR = os.path.join(ROOT_PATH, "assets", 'img/icons/clear.png')
 
 # Music and sound effects
-MUSIC_STORY = './assets/sound/music/story.mp3'
-MUSIC_CREDITS = './assets/sound/music/credits.mp3'
-MENU_MUSIC = './assets/sound/music/intro.mp3'
-TOWER_MUSIC = './assets/sound/music/tower.mp3'
-STAGE_1_MUSIC = './assets/sound/music/stage_1.mp3'
-STAGE_2_MUSIC = './assets/sound/music/stage_2.mp3'
-STAGE_3_MUSIC = './assets/sound/music/stage_3.mp3'
-STAGE_4_MUSIC = './assets/sound/music/stage_4.mp3'
-STAGE_5_MUSIC = './assets/sound/music/stage_5.mp3'
-GAMEOVER_MUSIC = './assets/sound/music/game_over.mp3'
-FINALE_MUSIC = './assets/sound/music/finale.mp3'
-CHIME_SFX = './assets/sound/sfx/logo.mp3'
-BARRIER_SFX = './assets/sound/sfx/barrier.mp3'
-SWITCH_HIT_SFX = './assets/sound/sfx/switch_hit.mp3'
-SWITCH_OPEN_ALL_SFX ='./assets/sound/sfx/opened_all_switches.mp3' 
-VICTORY_SFX = './assets/sound/sfx/victory.mp3'
-PAUSE_SFX = './assets/sound/sfx/pause.mp3'
-UNPAUSE_SFX = './assets/sound/sfx/unpause.mp3'
-ATTACK_SFX = './assets/sound/sfx/hit.wav'
-FIREBALL_SFX = './assets/sound/sfx/fireball.wav'
-PLAYER_HIT_SFX = './assets/sound/sfx/player_hit.wav'
-PLAYER_DEATH_SFX = './assets/sound/sfx/destroy_player.wav'
-ENEMY_HIT_SFX = './assets/sound/sfx/enemy_hit.wav'
-ENEMY_DEATH_SFX = './assets/sound/sfx/destroy_enemy.wav'
-FIREBALL_IMPACT_SFX = './assets/sound/sfx/fireball_hit.wav'
-EXPLOSION_SFX = './assets/sound/sfx/explosion.wav'
-SMALL_FIREBALL_SFX = './assets/sound/sfx/fireball_hit.wav'
+MUSIC_STORY = os.path.join(ROOT_PATH, "assets", 'sound/music/story.mp3')
+MUSIC_CREDITS = os.path.join(ROOT_PATH, "assets", 'sound/music/credits.mp3')
+MENU_MUSIC = os.path.join(ROOT_PATH, "assets", 'sound/music/intro.mp3')
+TOWER_MUSIC = os.path.join(ROOT_PATH, "assets", 'sound/music/tower.mp3')
+STAGE_1_MUSIC = os.path.join(ROOT_PATH, "assets", 'sound/music/stage_1.mp3')
+STAGE_2_MUSIC = os.path.join(ROOT_PATH, "assets", 'sound/music/stage_2.mp3')
+STAGE_3_MUSIC = os.path.join(ROOT_PATH, "assets", 'sound/music/stage_3.mp3')
+STAGE_4_MUSIC = os.path.join(ROOT_PATH, "assets", 'sound/music/stage_4.mp3')
+STAGE_5_MUSIC = os.path.join(ROOT_PATH, "assets", 'sound/music/stage_5.mp3')
+GAMEOVER_MUSIC = os.path.join(ROOT_PATH, "assets", 'sound/music/game_over.mp3')
+FINALE_MUSIC = os.path.join(ROOT_PATH, "assets", 'sound/music/finale.mp3')
+CHIME_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/logo.mp3')
+BARRIER_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/barrier.mp3')
+SWITCH_HIT_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/switch_hit.mp3')
+SWITCH_OPEN_ALL_SFX =os.path.join(ROOT_PATH, "assets", 'sound/sfx/opened_all_switches.mp3')
+VICTORY_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/victory.mp3')
+PAUSE_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/pause.mp3')
+UNPAUSE_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/unpause.mp3')
+ATTACK_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/hit.wav')
+FIREBALL_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/fireball.wav')
+PLAYER_HIT_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/player_hit.wav')
+PLAYER_DEATH_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/destroy_player.wav')
+ENEMY_HIT_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/enemy_hit.wav')
+ENEMY_DEATH_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/destroy_enemy.wav')
+FIREBALL_IMPACT_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/fireball_hit.wav')
+EXPLOSION_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/explosion.wav')
+SMALL_FIREBALL_SFX = os.path.join(ROOT_PATH, "assets", 'sound/sfx/fireball_hit.wav')
 MUSIC_VOLUME = 0.5 # between 0 and 1
 SFX_VOLUME = 0.5 # between 0 and 1
 
 # Objects
-TERRAIN_SPRITE = './assets/img/terrain.png'
-ICE_CUBE_SPRITE = './assets/img/ice_cube.PNG'
-SWITCH_SPRITE = './assets/img/lever.png'
-DOOR_SPRITE = './assets/img/Door_Open.png'
-PORTAL_SPRITE = './assets/img/Portal.png'
-PORTAL_LOCKED_SPRITE = './assets/img/Portal_locked.png'
-MIASMA_SPRITE = './assets/img/miasma.png'
+TERRAIN_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/terrain.png')
+ICE_CUBE_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/ice_cube.PNG')
+SWITCH_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/lever.png')
+DOOR_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/Door_Open.png')
+PORTAL_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/Portal.png')
+PORTAL_LOCKED_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/Portal_locked.png')
+MIASMA_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/miasma.png')
 
 # Player
-PLAYER_WALK_SPRITE = './assets/img/player/movement.png'
-PLAYER_TELEPORT_SPRITE = './assets/img/player/teleport.png'
-PLAYER_BARRIER_SPRITE = './assets/img/player/barrier.png'
-PLAYER_DEATH_SPRITE = './assets/img/player/death.png'
-PLAYER_HURT_SPRITE = './assets/img/player/hurt.png'
-PLAYER_ATTACK_SPRITE = './assets/img/attack.png'
-CHARACTER_ATTACK_SPRITE = './assets/img/player/attack.png'
-PLAYER_FIREBALL_SPRITE = './assets/img/fireball.png'
-PLAYER_EXPLOSION_SPRITE = './assets/img/fireball.png'
+PLAYER_WALK_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/player/movement.png')
+PLAYER_TELEPORT_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/player/teleport.png')
+PLAYER_BARRIER_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/player/barrier.png')
+PLAYER_DEATH_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/player/death.png')
+PLAYER_HURT_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/player/hurt.png')
+PLAYER_ATTACK_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/attack.png')
+CHARACTER_ATTACK_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/player/attack.png')
+PLAYER_FIREBALL_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/fireball.png')
+PLAYER_EXPLOSION_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/fireball.png')
 
 # Enemies
-GREEN_SLIME_WALK_SPRITE = './assets/img/enemies/slime_green/walk/body.png'
-RED_SLIME_WALK_SPRITE = './assets/img/enemies/slime_red/walk/body.png'
-BLUE_SLIME_WALK_SPRITE = './assets/img/enemies/slime_blue/walk/body.png'
-VAMPIRE_WALK_SPRITE = './assets/img/enemies/vampire/walk/body.png'
-ORC_WALK_SPRITE = './assets/img/enemies/orc/walk/body.png'
+GREEN_SLIME_WALK_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/enemies/slime_green/walk/body.png')
+RED_SLIME_WALK_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/enemies/slime_red/walk/body.png')
+BLUE_SLIME_WALK_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/enemies/slime_blue/walk/body.png')
+VAMPIRE_WALK_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/enemies/vampire/walk/body.png')
+ORC_WALK_SPRITE = os.path.join(ROOT_PATH, "assets", 'img/enemies/orc/walk/body.png')
 
 # The following section contains grid-based tilemaps that allow us to 'draw' the various stages of our game.
 tower_hub = (

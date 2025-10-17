@@ -28,6 +28,7 @@ class Game:
         # Parameter to check if currently showing a hint window (to avoid overlap with pause screen)
         self.showing_hint = False
         self.hint_not_shown = True
+        self.credits_shown = False
         # Tile object
         self.tilemap = None
 
@@ -147,37 +148,31 @@ class Game:
                 if column == "P":
                     # Place Player sprite at x=j and y=i coordinates
                     if curr_player == None:
-                        print("went through none")
                         # Player entered stage through portal
                         if stage_type == 4:
                             Geo(self, j, i, stage_type, 2, GROUND_LAYER)
                         else:
                             Ground(self, j, i, stage_type)
                         self.player = Player(self, j, i)
-                        print(j, " ", i)
                         self.player.current_stage = stage_type
                         if stage_type == 5:
                             self.player.all_open = True
                         else:
                             self.player.all_open = False
                         self.load_progress()
-                        print("self.player.rect", self.player.rect)
                     else:
                         # Player is replaying stage after dying
-                        print("went through other one")
                         if stage_type == 4:
                             Geo(self, j, i, stage_type, 2, GROUND_LAYER)
                         else:
                             Ground(self, j, i, stage_type)
                         self.player = Player(self, j, i)
-                        print(j, " ", i)
                         self.player.current_stage = stage_type
                         if stage_type == 5:
                             self.player.all_open = True
                         else:
                             self.player.all_open = False
                         self.player.update_player_stats(curr_player)  
-                        print("self.player.rect", self.player.rect)
                 if column == "W":
                     # Place a wall sprite at x=j and y=i coordinates
                         Wall(self, j, i, stage_type)
@@ -359,6 +354,8 @@ class Game:
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
+                pygame.quit()
+                sys.exit()  
                 return
             
             # If a keyboard key has been pressed and game was paused
@@ -539,6 +536,8 @@ class Game:
                     self.paused = False
                     self.showing_hint = False
                     self.hint_not_shown = False
+                    pygame.quit()
+                    sys.exit()  
                     return
                 # If any button is pressed, navigate away from hint window and unpause
                 elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
@@ -596,6 +595,8 @@ class Game:
                     if event.type == pygame.QUIT:
                         self.playing = False
                         self.running = False
+                        pygame.quit()
+                        sys.exit()  
                     # If a mouse button is clicked, start the game
                     if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                         pygame.mixer.music.stop()
@@ -622,9 +623,10 @@ class Game:
         # Load normal loading screen on clearing a stage, or credits after clearing all
         if not self.player.all_clear:
             self.loading_screen(0, self.player)
-        else:
-
+        elif not self.credits_shown:
             self.credits_screen()
+        else:
+            self.loading_screen(-1, self.player)
     
     # A pop-up window that displays the game's control scheme upon first starting it.
     def controls_window(self):
@@ -646,6 +648,8 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.playing = False
                     self.running = False
+                    pygame.quit()
+                    sys.exit()  
                 elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP:
                     self.paused = False
                     return # Exit the window when any key is pressed or mouse is clicked
@@ -709,6 +713,8 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.playing = False
                     self.running = False
+                    pygame.quit()
+                    sys.exit()  
                     return
                 elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN: # Check for a mouse click to skip the screen
                     self.fade_to_black(FADE_DURATION)
@@ -753,6 +759,8 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.playing = False
                     self.running = False
+                    pygame.quit()
+                    sys.exit()  
                     return
                 else: 
                     # Check for a mouse or key click to skip the screen
@@ -812,11 +820,11 @@ class Game:
     # Scrolling text credits screen
     def credits_screen(self):
         pygame.mixer.music.stop()
+        self.fade_to_black(FADE_DURATION)
         # Play the background music
         pygame.mixer.music.load(MUSIC_CREDITS)
         pygame.mixer.music.play(-1) 
         self.fade_from_black(FADE_DURATION, self.credits_background)
-        
         start_time = pygame.time.get_ticks()
         text_y_offset = WIN_HEIGHT # Start the text off the bottom of the screen
         last_line_index = len(CREDITS) - 1 # We use this to know when to stop scrolling
@@ -832,6 +840,8 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.playing = False
                     self.running = False
+                    pygame.quit()
+                    sys.exit()  
                     return
                 else: 
                     # Check for a mouse or key click to skip the screen
@@ -842,6 +852,7 @@ class Game:
                     if event.type == pygame.KEYUP or event.type == pygame.MOUSEBUTTONUP:
                         is_holding_mouse = False        
                         if current_tme - mouse_down_time < SKIP_THRESHOLD_MS:
+                            self.credits_shown = True
                             pygame.mixer.music.stop()
                             self.fade_to_black(FADE_DURATION)
                             self.loading_screen(-1, self.player)
@@ -880,16 +891,18 @@ class Game:
             if text_y_offset + (last_line_index * 40) <= WIN_HEIGHT / 2:
                 # Keep the final text on screen for a moment
                 time.sleep(5)
-                pygame.mixer.music.stop()
-                self.fade_to_black(FADE_DURATION)
-                return  
+                pygame.display.update()
+                self.clock.tick(FPS)
+                break
             pygame.display.update()
             self.clock.tick(FPS)
             
         pygame.mixer.music.stop()
         self.fade_to_black(FADE_DURATION)
+        self.credits_shown = True
         self.loading_screen(-1, self.player)
-
+        
+        
     # The start-up menu screen, displaying the game logo
     def menu_screen(self):
         intro = True
@@ -907,6 +920,8 @@ class Game:
                     intro = False
                     self.playing = False
                     self.running = False
+                    pygame.quit()
+                    sys.exit()  
                 # If a mouse or key button is clicked, start the game
                 elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                     intro = False
@@ -988,6 +1003,8 @@ class Game:
                         on_clear_screen = False
                         self.playing = False
                         self.running = False
+                        pygame.quit()
+                        sys.exit()  
                     # If a mouse button is clicked, start the game
                     elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                         on_clear_screen = False
