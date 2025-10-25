@@ -24,7 +24,7 @@ class Spritesheet:
         Loads the spritesheet image file and converts it to a format that
         supports per-pixel transparency (alpha channel).
 
-        Args:
+        Arguments:
             file (str): The file path to the spritesheet image.
         """
         self.sheet = pygame.image.load(file).convert_alpha() # Get the img file
@@ -34,7 +34,7 @@ class Spritesheet:
         """
         Creates a cutout (sub-surface) from the spritesheet image.
 
-        Args:
+        Arguments:
             x (int): The starting X-coordinate for the cutout.
             y (int): The starting Y-coordinate for the cutout.
             width (int): The width of the sprite to cut out.
@@ -56,7 +56,7 @@ class Player(pygame.sprite.Sprite):
         """
         Initializes the player sprite with game context and starting position.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game object.
             x (int): Starting X-coordinate (grid index).
             y (int): Starting Y-coordinate (grid index).
@@ -325,7 +325,7 @@ class Player(pygame.sprite.Sprite):
         Updates the current player's statistics and persistent game state 
         using data from a previous Player instance (e.g., after dying and restarting).
 
-        Args:
+        Arguments:
             other_player (Player): The Player instance containing the saved stats.
         """
         # x/y change to record changes in coordinates upon moving. Added to the x/y variables upon update.
@@ -519,7 +519,7 @@ class Player(pygame.sprite.Sprite):
         Corrects player position and world scroll to prevent clipping. Also handles
         miasma damage if not shielded.
 
-        Args:
+        Arguments:
             direction (str): The axis of movement being checked ('x' or 'y').
 
         Returns:
@@ -925,7 +925,7 @@ class Enemy(pygame.sprite.Sprite):
         """
         Initializes the Enemy sprite.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting grid column.
             y (int): Starting grid row.
@@ -1012,7 +1012,7 @@ class Enemy(pygame.sprite.Sprite):
         """
         Calculates the player's grid position based on their pixel center.
 
-        Args:
+        Arguments:
             player_pos (pygame.math.Vector2): Player's current pixel position.
 
         Returns:
@@ -1137,7 +1137,7 @@ class Enemy(pygame.sprite.Sprite):
         Calculates the shortest path to the player using BFS pathfinding and 
         moves the enemy along the calculated path nodes.
 
-        Args:
+        Arguments:
             player_pos (pygame.math.Vector2): The player's current pixel position.
             enemy_pos (pygame.math.Vector2): The enemy's current pixel position.
         """
@@ -1199,7 +1199,7 @@ class Enemy(pygame.sprite.Sprite):
         Checks for enemy collision with walls, blocks, holes, and geo-obstacles.
         Corrects position to prevent clipping and returns True if a collision occurs.
 
-        Args:
+        Arguments:
             direction (str): The axis of movement being checked ('x' or 'y').
 
         Returns:
@@ -1325,7 +1325,7 @@ class Enemy(pygame.sprite.Sprite):
         Loads the correct sprite animation sets (up/down/left/right) based on 
         the current stage type (1-5) and enemy type (Slime, Vampire, Orc).
 
-        Args:
+        Arguments:
             stage_type (int): The current stage number to determine the enemy skin.
         """   
         self.stage_type = stage_type
@@ -1581,7 +1581,7 @@ class TileMap:
         """
         Initializes the TileMap with map data and calculates grid dimensions.
 
-        Args:
+        Arguments:
             tilemap_data (tuple[str]): The grid data.
         """
         self.data = tilemap_data
@@ -1593,7 +1593,7 @@ class TileMap:
         """
         Gets the character at the given grid coordinates.
 
-        Args:
+        Arguments:
             x (int): The grid column index.
             y (int): The grid row index.
 
@@ -1610,7 +1610,7 @@ class TileMap:
         Checks if a given grid coordinate is within bounds and not an obstacle 
         based on the NON_WALKABLE_CHARS list in config.py.
 
-        Args:
+        Arguments:
             x (int): The grid column index.
             y (int): The grid row index.
 
@@ -1631,7 +1631,7 @@ class TileMap:
         """
         Returns a list of valid, walkable neighboring grid nodes (up, down, left, right).
 
-        Args:
+        Arguments:
             node (GridNode): The starting (x, y) grid coordinates.
 
         Returns:
@@ -1656,7 +1656,7 @@ def find_path(tilemap: TileMap, start_node: GridNode, end_node: GridNode) -> Opt
     """
     Finds the shortest path between two grid nodes using BFS algorithm.
 
-    Args:
+    Arguments:
         tilemap (TileMap): The map structure used to check walkability.
         start_node (GridNode): The enemy's starting (x, y) grid position.
         end_node (GridNode): The player's target (x, y) grid position.
@@ -1711,7 +1711,7 @@ class Wall(pygame.sprite.Sprite):
         """
         Initializes a Wall sprite.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting grid column.
             y (int): Starting grid row.
@@ -1755,7 +1755,7 @@ class Block(pygame.sprite.Sprite):
         """
         Initializes a Block sprite.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting grid column.
             y (int): Starting grid row.
@@ -1800,7 +1800,7 @@ class Geo(pygame.sprite.Sprite):
         """
         Initializes a Geo sprite, placing it into the correct collision/interaction group.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting grid column.
             y (int): Starting grid row.
@@ -1902,7 +1902,7 @@ class Hole(pygame.sprite.Sprite):
         """
         Initializes a Hole sprite.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting grid column.
             y (int): Starting grid row.
@@ -1946,7 +1946,7 @@ class Ground(pygame.sprite.Sprite):
         """
         Initializes a Ground sprite.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting grid column.
             y (int): Starting grid row.
@@ -1990,7 +1990,7 @@ class Switch(pygame.sprite.Sprite):
         """
         Initializes a Switch sprite.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting grid column.
             y (int): Starting grid row.
@@ -2085,7 +2085,7 @@ class Door(pygame.sprite.Sprite):
         """
         Initializes a Door sprite.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting grid column.
             y (int): Starting grid row.
@@ -2156,7 +2156,7 @@ class Portal(pygame.sprite.Sprite):
         """
         Initializes a Portal sprite.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting grid column.
             y (int): Starting grid row.
@@ -2275,7 +2275,7 @@ class Attack(pygame.sprite.Sprite):
         """
         Initializes the Attack sprite.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting pixel x-coordinate of the hitbox.
             y (int): Starting pixel y-coordinate of the hitbox.
@@ -2414,7 +2414,7 @@ class Fireball(pygame.sprite.Sprite):
         """
         Initializes the Fireball projectile.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting pixel x-coordinate.
             y (int): Starting pixel y-coordinate.
@@ -2572,7 +2572,7 @@ class Explosion(pygame.sprite.Sprite):
         """
         Initializes the Explosion spell.
 
-        Args:
+        Arguments:
             game (Game): Reference to the main Game instance.
             x (int): Starting pixel x-coordinate.
             y (int): Starting pixel y-coordinate.
