@@ -8,10 +8,13 @@ from config import *
 import json # Used for handling jason data in save file I/O
 
 class Game:
-     # This code is for game bootup 
+    """
+    The main game class responsible for initialization, the core game loop,
+    loading assets, managing game state, and handling screen transitions.
+    """
     def __init__(self):
+        """Initializes Pygame, sets up the display, loads all game assets, and initializes the mixer for audio."""
         pygame.init()
-        # Initialize the mixer for audio
         pygame.mixer.init()
         #Width and height of display
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
@@ -117,15 +120,15 @@ class Game:
 
     # This method creates a tile map via a loop through tilemap's rows and columns, replacing characters with tiles.
     def createTileMap(self, curr_tilemap: tuple[str], stage_type: int, curr_player: Player = None):        
-        '''
-        Different tile art will be used depending on the stage type (1 to 5).
-        Type 1: plains
-        Type 2: ice
-        Type 3: fire
-        Type 4: temple
-        Type 5: maze
-        '''
-
+        """
+        Creates the tile map for a new stage by iterating through the map data 
+        and replacing characters with sprites (Ground, Wall, Enemy, etc.).
+        
+        Arguments:
+            curr_tilemap (tuple[str]): The grid data for the stage.
+            stage_type (int): The numeric ID of the stage (1-5, 0 for hub).
+            curr_player (Player, optional): The existing Player object used for carrying stats.
+        """
         # Assign the tile map to the TileMap object for path finding.
         self.tilemap = TileMap(curr_tilemap)
 
@@ -243,7 +246,10 @@ class Game:
                 
     # Check for timed switches every 1 second
     def timed_switches_check(self):
-        # Iterate through each locked door, get its timed switches (if any)
+        """
+        Iterates through doors and checks if any are linked to timed switches. 
+        If a sequence of timed switches is hit within 1 second, the door is unlocked permanently.
+        """
         for door in self.doors:
             if not door.locked:
                 continue
@@ -279,6 +285,14 @@ class Game:
                         switch.reset()
     # This method runs whenever we start a new game
     def set_stage(self, current_stage: int, player: Player = None):
+        """
+        Initializes the game state and loads the specified stage.
+        Resets sprite groups, loads music, and positions the player.
+        
+        Arguments:
+            current_stage (int): The stage number to load (0 for hub).
+            player (Player, optional): The existing Player object whose stats should be preserved.
+        """
         #indicates that the player is currently alive and playing
         self.playing = True
         #this object contains all game sprites, including environment, player and enemies, etc., allowing sprite update
@@ -349,6 +363,7 @@ class Game:
 
     # Game loop events, e.g. clicks and keyboard presses
     def events(self):
+        """Handles all Pygame events such as quitting, pausing, and player input for attacks and abilities."""
         for event in pygame.event.get():
             # If the quit button has been pressed, stop the game
             if event.type == pygame.QUIT:
@@ -425,9 +440,12 @@ class Game:
                 if event.type == pygame.KEYUP and event.key == pygame.K_a:
                     self.player.is_shielded = False
 
-
     # Updates to game's values as events trigger
     def update(self):
+        """
+        Runs the game's core logic. Updates all sprites, checks for stage changes, 
+        and initiates the loading screen if a stage transition is needed.
+        """
         if not self.paused:
             # find update method in each sprite in the group "all_sprites" and run it
             self.all_sprites.update()
@@ -446,6 +464,7 @@ class Game:
 
     # Draw/display sprites in response to events and updates
     def draw(self):
+        """Renders all game elements to the screen, including sprites, health/mana bars, and the pause overlay."""
         self.screen.fill(BLACK)
         # go through each sprite in the group "all_sprites", finds image and rect, and draws that unto the window
         self.all_sprites.draw(self.screen)
@@ -489,7 +508,7 @@ class Game:
         pygame.display.update()
         
     def main(self):
-        # Main loop of the game, where we keep track of various things
+        """The core game loop that runs while the game is being played (self.playing is True)."""
         while self.playing:                
             self.events()          
             self.update()
@@ -497,6 +516,17 @@ class Game:
 
     # Used to wrap text into the width of a window
     def wrap_text(self, text: str, font: pygame.font.Font, max_width: int):
+        """
+        Breaks a string of text into a list of lines that fit within a specified maximum pixel width.
+        
+        Arguments:
+            text (str): The input string to wrap.
+            font (pygame.font.Font): The font object used to measure text size.
+            max_width (int): The maximum width in pixels a line can occupy.
+            
+        Returns:
+            List[str]: A list of strings, where each string is a wrapped line.
+        """
         words = text.split(' ')
         lines = []
         current_line = ""
@@ -512,14 +542,19 @@ class Game:
         return lines
 
     def show_hint(self):
-        # Show a hint for current stage if it hasn't been shown yet
+        """Sets the game state to pause and shows the hint window for the current stage."""
         if self.player.current_stage in STAGE_HINTS.keys():
             self.paused = True
             self.showing_hint = True
 
     def hint_screen(self, message: str):
-        #self.draw() # Draw the game first so the overlay is on top
-
+        """
+        Displays a centered pop-up window with wrapped text (the stage hint).
+        The game remains paused until the user clicks or presses a key.
+        
+        Arguments:
+            message (str): The stage hint text to display.
+        """        
         window_width = 450
         window_height = 200
         window_x = (WIN_WIDTH - window_width) // 2
@@ -573,6 +608,10 @@ class Game:
             self.clock.tick(FPS) 
 
     def game_over(self):
+        """
+        Handles the Game Over state. Stops music, removes sprites, and displays 
+        the game over screen, allowing the player to continue the current stage.
+        """
         if self.player.is_dead: 
             curr_player = self.player
             self.screen.fill(BLACK)
@@ -607,6 +646,10 @@ class Game:
 
     # What happens when a stage is cleared.
     def stage_clear(self):
+        """
+        Called when the player clears a stage. 
+        Unlocks the next stage and proceeds to the loading screen.
+        """
         # Unlock the next stage when current stage is cleared
         if self.player.current_stage == 1:
             self.player.stages_locked[1] = False
@@ -630,6 +673,10 @@ class Game:
     
     # A pop-up window that displays the game's control scheme upon first starting it.
     def controls_window(self):
+        """
+        Displays a window with game controls upon the first launch.
+        The window is animated and persists until the user presses a key or clicks.
+        """
         self.paused = True
 
         # Window height and width
@@ -675,6 +722,12 @@ class Game:
 
     # Helps with smooth transition between screens by fading to black. 
     def fade_to_black(self, duration: int):
+        """
+        Applies a fade-to-black effect over the screen for a given duration.
+        
+        Arguments:
+            duration (int): The duration of the fade effect in milliseconds.
+        """
         start_time = pygame.time.get_ticks()
         while pygame.time.get_ticks() - start_time < duration:
             # Alpha controls the opaqueness of the color pixels
@@ -689,6 +742,13 @@ class Game:
     
     # Helps with smooth transition between screens by fading back from black. 
     def fade_from_black(self, duration: int, background_surface: pygame.Surface):
+        """
+        Applies a fade-from-black effect over the screen, revealing the given background surface.
+        
+        Arguments:
+            duration (int): The duration of the fade effect in milliseconds.
+            background_surface (pygame.Surface): The image/surface to reveal.
+        """
         self.screen.fill(BLACK)
         start_time = pygame.time.get_ticks()
         while pygame.time.get_ticks() - start_time < duration:
@@ -703,6 +763,7 @@ class Game:
 
     # Studio logo splash screen
     def splash_screen(self):
+        """Displays the studio logo, fades it in and out, and plays a sound effect."""
         self.screen.fill(BLACK)
         pygame.display.update()
         
@@ -738,6 +799,10 @@ class Game:
 
     # Scrolling text intro screen
     def intro_screen(self):
+        """
+        Displays the game's introduction story text scrolling up the screen. 
+        Can be skipped by clicking or accelerated by holding the mouse/key.
+        """
         self.fade_from_black(FADE_DURATION, self.intro_background)
 
         # Play the background music
@@ -819,6 +884,10 @@ class Game:
     
     # Scrolling text credits screen
     def credits_screen(self):
+        """
+        Displays the game's credits text scrolling up the screen after the final stage is complete.
+        Can be skipped by clicking or accelerated by holding the mouse/key.
+        """
         pygame.mixer.music.stop()
         self.fade_to_black(FADE_DURATION)
         # Play the background music
@@ -902,9 +971,9 @@ class Game:
         self.credits_shown = True
         self.loading_screen(-1, self.player)
         
-        
     # The start-up menu screen, displaying the game logo
     def menu_screen(self):
+        """Displays the main menu screen and waits for player input to start the game or open controls."""
         intro = True
         self.fade_from_black(FADE_DURATION, self.menu_background)
         
@@ -935,6 +1004,14 @@ class Game:
             pygame.display.update()
     # The loading screen, when transitioning between stages/screens
     def loading_screen(self, stage_num: int, curr_player: int):
+        """
+        Displays a stage-specific loading screen, plays a transition effect, 
+        and then calls set_stage to load the actual level.
+        
+        Arguments:
+            stage_num (int): The number of the stage to load (or 0 for hub, -1 for all stages clear).
+            curr_player (Player): The player object whose state needs to be maintained.
+        """
         pygame.mixer.music.stop() # stop all music
         self.fade_to_black(FADE_DURATION)
         
@@ -1015,6 +1092,7 @@ class Game:
                         g.set_stage(0)
     # Saves the progress of the current player locally upon clearing a stage.
     def save_progress(self):
+        """Saves the player's current progress to a local JSON file."""
         # Store progress as a dict
         player_data = {
             "stages_locked": self.player.stages_locked,
@@ -1030,6 +1108,11 @@ class Game:
 
     # Load the progress of the current player upon boot up, if a save file exists.
     def load_progress(self):
+        """
+        Attempts to load player progress from the SAVE_FILEPATH. If successful, 
+        it updates the current player's stats. Handles FileNotFoundError accordingly 
+        and raises an Exception on JSON corruption, asking user to fix save file or delete it.
+        """
         # Try to find the file and read data from it: if successful, copy the progress to the current game's player.
         try:
             with open(SAVE_FILEPATH, 'r') as file:

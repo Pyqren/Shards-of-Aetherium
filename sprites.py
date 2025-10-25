@@ -15,17 +15,52 @@ GridNode = Tuple[int, int]
 
 #This class represent all spritesheets of the game and the different associated methods of getting and cutting them from their image files
 class Spritesheet:
+    """
+    Represents all spritesheets of the game and provides methods for cutting 
+    sprites from their image files, handling transparency.
+    """
     def __init__(self, file):
+        """
+        Loads the spritesheet image file and converts it to a format that
+        supports per-pixel transparency (alpha channel).
+
+        Args:
+            file (str): The file path to the spritesheet image.
+        """
         self.sheet = pygame.image.load(file).convert_alpha() # Get the img file
 
     # create a cutout from the sprites image
     def get_sprite(self, x: int, y: int, width: int, height: int) -> pygame.Surface:
+        """
+        Creates a cutout (sub-surface) from the spritesheet image.
+
+        Args:
+            x (int): The starting X-coordinate for the cutout.
+            y (int): The starting Y-coordinate for the cutout.
+            width (int): The width of the sprite to cut out.
+            height (int): The height of the sprite to cut out.
+
+        Returns:
+            pygame.Surface: A new Surface containing only the requested sprite image.
+        """
         sprite = pygame.Surface([width, height], pygame.SRCALPHA)
         sprite.blit(self.sheet, (0,0), (x, y, width, height))
         return sprite
 #This class represent the player's sprite, and how they are updated throughout gameplay
 class Player(pygame.sprite.Sprite):
+    """
+    Represents the player's sprite, managing state, movement, statistics (HP/Mana), 
+    collision, and animations throughout gameplay.
+    """
     def __init__(self, game: 'Game', x: int, y: int):
+        """
+        Initializes the player sprite with game context and starting position.
+
+        Args:
+            game (Game): Reference to the main Game object.
+            x (int): Starting X-coordinate (grid index).
+            y (int): Starting Y-coordinate (grid index).
+        """
         self.game = game
         self._layer = PLAYER_LAYER # Control which layer on the screen the sprite is on
         self.groups = self.game.all_sprites, self.game.players # Add sprite to these groups
@@ -286,6 +321,13 @@ class Player(pygame.sprite.Sprite):
     
     # Update current player with another player's stats. Used with loading save files.
     def update_player_stats(self, other_player: 'Player'):
+        """
+        Updates the current player's statistics and persistent game state 
+        using data from a previous Player instance (e.g., after dying and restarting).
+
+        Args:
+            other_player (Player): The Player instance containing the saved stats.
+        """
         # x/y change to record changes in coordinates upon moving. Added to the x/y variables upon update.
         self.x_change = 0
         self.y_change = 0
@@ -328,6 +370,11 @@ class Player(pygame.sprite.Sprite):
 
     # Method for updating the game after an action, e.g. movement or attacking
     def update(self):
+        """
+        Updates the player's state every frame. Handles teleportation logic, 
+        movement, collision checks, invincibility timers, flickering effects,
+        and mana regeneration/drain.
+        """
         self.is_moving = False
         # Check if we are currently teleporting
         if self.teleporting:
@@ -418,6 +465,14 @@ class Player(pygame.sprite.Sprite):
 
     # Method for player sprite movement. Returns bool if player is currently moving.
     def movement(self) -> bool:
+        """
+        Handles player input for movement. Applies world scrolling (by moving 
+        all sprites) and updates directional state. Adjusts speed based on 
+        Shift key (boost) or terrain (slippery ice).
+
+        Returns:
+            bool: True if the player is currently pressing a movement key, False otherwise.
+        """
         keys = pygame.key.get_pressed() # Capture keys that have ben pressed so far.
         slip_hits = pygame.sprite.spritecollide(self, self.game.slippery_ice, False)
 
@@ -459,6 +514,17 @@ class Player(pygame.sprite.Sprite):
 
     # Method for player sprite's collision detection w/ obstacle (e.g. block), depending on direction of collision. Returns True if collision occurs.
     def collide_obstacles(self, direction: str) -> bool:
+        """
+        Checks for player collision with solid objects (Walls, Blocks, Holes, Doors, Geo).
+        Corrects player position and world scroll to prevent clipping. Also handles
+        miasma damage if not shielded.
+
+        Args:
+            direction (str): The axis of movement being checked ('x' or 'y').
+
+        Returns:
+            bool: True if a collision with a solid obstacle occurred, False otherwise.
+        """
         # checks if rectangle of one sprite is colliding with rectangle of another.
         hits_block = pygame.sprite.spritecollide(self, self.game.blocks, False)
         hits_door = pygame.sprite.spritecollide(self, self.game.doors, False)
@@ -612,6 +678,13 @@ class Player(pygame.sprite.Sprite):
         
     # Method for player sprite's collision detection w/ enemies. Returns True if valid enemy collision occurs.
     def collide_enemy(self):
+        """
+        Checks for player collision with enemies and applies damage, granting 
+        invincibility frames (I-frames) upon a hit.
+
+        Returns:
+            bool: True if a non-invincible player collides with an enemy, False otherwise.
+        """
         # Ignore the collision and don't take damage if invincible or invulnerable (teleporting)
         if self.invincible or self.invulnerable or self.is_shielded:
             return False
@@ -632,6 +705,11 @@ class Player(pygame.sprite.Sprite):
     
     # Method for player sprite's animation
     def animate(self):
+        """
+        Manages the player's visual state based on priority: Death, Teleport, 
+        Shield, Attack, Walk, or Idle. Updates the sprite image and animation loop 
+        for the current state.
+        """
         # Check for death state first, as this should override all other animations
         if self.is_dead:
             if not self.death_animation_finished:
@@ -763,6 +841,10 @@ class Player(pygame.sprite.Sprite):
 
     #  Method to draw the player's health bar
     def draw_health_bar(self):
+        """
+        Draws the player's health bar (green) and its border (gold) at the 
+        top-left corner of the screen.
+        """
         # Calculate the health ratio to determine the width of the green health bar
         health_ratio = self.health / self.max_health
         # Health bar dimensions
@@ -784,6 +866,10 @@ class Player(pygame.sprite.Sprite):
 
     # Method to draw the player's mana bar
     def draw_mana_bar(self):
+        """
+        Draws the player's mana bar (blue) and its border (gold) directly below 
+        the health bar.
+        """
         # Calculate the mana ratio to determine the width of the blue mana bar
         mana_ratio = self.mana / self.max_mana
         # Mana bar dimensions
@@ -805,6 +891,10 @@ class Player(pygame.sprite.Sprite):
 
     # Method to teleport the player from one point to another on the map.
     def teleport(self):
+        """
+        Initiates the player's teleport sequence by setting the invulnerability 
+        flags and calculating the target position based on the current facing direction.
+        """
         # Make player invulnerable during teleport.
         self.teleporting = True
         self.invulnerable = True
@@ -827,7 +917,21 @@ class Player(pygame.sprite.Sprite):
 
 # This class represent the various enemy sprites, and how they are updated throughout gameplay
 class Enemy(pygame.sprite.Sprite):
+    """
+    Represents an enemy character. Manages movement (patrol/aggro), animations, 
+    collision with obstacles, and health.
+    """
     def __init__(self, game: 'Game', x: int, y: int, stage_type: int, threat_level: int = 1):
+        """
+        Initializes the Enemy sprite.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting grid column.
+            y (int): Starting grid row.
+            stage_type (int): Used to select the correct enemy sprite/animation set.
+            threat_level (int): Defines HP and behavior (1=normal, 2=elite).
+        """
         self.game = game
         self.stage_type = stage_type
         self.threat_level = threat_level # 1 for simple enemies, 2 for elites. Numbers used for scalability.
@@ -893,18 +997,37 @@ class Enemy(pygame.sprite.Sprite):
 
     # Gets the current pixel the enemy is on and converts it to a grid node.
     def get_current_node(self) -> GridNode:
+        """
+        Calculates the enemy's current grid position based on its pixel center.
+
+        Returns:
+            GridNode: The (x, y) grid coordinates.
+        """
         x = self.rect.centerx // TILESIZE
         y = self.rect.centery // TILESIZE
         return (x, y)
 
     # Gets the current pixel the player is on and converts it to a grid node.
     def get_player_node(self, player_pos: pygame.math.Vector2) -> GridNode:
+        """
+        Calculates the player's grid position based on their pixel center.
+
+        Args:
+            player_pos (pygame.math.Vector2): Player's current pixel position.
+
+        Returns:
+            GridNode: The (x, y) grid coordinates of the player.
+        """
         x = int(player_pos.x // TILESIZE)
         y = int(player_pos.y // TILESIZE)
         return (x, y)
 
     # Method for updating the game after an action, e.g. movement or attacking
     def update(self):
+        """
+        Updates the enemy's state, checks I-frames, handles movement selection 
+        (aggro vs. patrol), and resolves sprite flicker.
+        """
         # Only continue running enemy's update function while player is still alive.
         if not self.game.player.is_dead:
             self.animate() # Call the animate method to change sprites for animation effect.
@@ -952,6 +1075,11 @@ class Enemy(pygame.sprite.Sprite):
 
     # Method for sprite movement. 
     def movement(self):
+        """
+        Handles randomized patrol movement for the enemy. Includes boundary checks 
+        to prevent wandering too far and immediate direction changes upon hitting 
+        an obstacle.
+        """
         current_time = time.time()
         if current_time - self.last_move_time > 1: # Change direction every second
             self.facing = random.choice(['left', 'right', 'up', 'down'])
@@ -1005,6 +1133,14 @@ class Enemy(pygame.sprite.Sprite):
 
     # Method for sprite movement when aggro. Calculates a path to player and moves along it using TileMap.
     def movement_aggro(self, player_pos: pygame.math.Vector2, enemy_pos: pygame.math.Vector2):
+        """
+        Calculates the shortest path to the player using BFS pathfinding and 
+        moves the enemy along the calculated path nodes.
+
+        Args:
+            player_pos (pygame.math.Vector2): The player's current pixel position.
+            enemy_pos (pygame.math.Vector2): The enemy's current pixel position.
+        """
         enemy_node = self.get_current_node()
         player_node = self.get_player_node(player_pos)
 
@@ -1059,6 +1195,16 @@ class Enemy(pygame.sprite.Sprite):
 
     # Method for sprite's collision detection w/ obstacle (e.g. block), depending on direction of collision. Returns True if collision occured, else False.
     def collide_obstacles(self, direction: str) -> bool:
+        """
+        Checks for enemy collision with walls, blocks, holes, and geo-obstacles.
+        Corrects position to prevent clipping and returns True if a collision occurs.
+
+        Args:
+            direction (str): The axis of movement being checked ('x' or 'y').
+
+        Returns:
+            bool: True if a collision with a non-walkable sprite occurred, False otherwise.
+        """
         # checks if rectangle of one sprite is colliding with rectangle of another: in this case, player's and all game blocks
         hits_block = pygame.sprite.spritecollide(self, self.game.blocks, False)
         hits_holes = pygame.sprite.spritecollide(self, self.game.holes, False)
@@ -1153,6 +1299,10 @@ class Enemy(pygame.sprite.Sprite):
 
     # Method for sprite's collision detection w/ enemy, depending on direction of collision
     def collide_enemies(self):
+        """
+        Handles enemy-to-enemy collision detection, applying a push vector 
+        to prevent enemies from overlapping and getting stuck.
+        """
         # checks if rectangle of one sprite is colliding with rectangle of another: in this case, player's and all game blocks
         hits_enemy = pygame.sprite.spritecollide(self, self.game.enemies, False)
         
@@ -1170,7 +1320,14 @@ class Enemy(pygame.sprite.Sprite):
      # Method for sprite's animation
     
     # Method to get the right sprite for enemy
-    def get_animations(self, stage_type: int):   
+    def get_animations(self, stage_type: int):
+        """
+        Loads the correct sprite animation sets (up/down/left/right) based on 
+        the current stage type (1-5) and enemy type (Slime, Vampire, Orc).
+
+        Args:
+            stage_type (int): The current stage number to determine the enemy skin.
+        """   
         self.stage_type = stage_type
 
         # Green Slime
@@ -1340,7 +1497,10 @@ class Enemy(pygame.sprite.Sprite):
             self.animation_loop_max = 6
     
     # Method for sprite's animation
-    def animate(self):   
+    def animate(self):
+        """
+        Cycles through the current enemy animation frames based on movement direction.
+        """   
         # Use an animation sprites list depending on the direction sprite is facing while moving: down, up, left, or right.
         # self.animation_loop: using 0.1 and math.floor allows us to move to the next sprite in the list every 10 frames (incrementing 0.1 [per frame), looping at the end of the list to create an animation.
         if self.facing == "down":
@@ -1387,6 +1547,10 @@ class Enemy(pygame.sprite.Sprite):
     
     # Method to draw the enemy's health bar
     def draw_health_bar(self):
+        """
+        Draws the enemy's health bar (red) above the enemy sprite. Only called 
+        when the health_bar_visible flag is True (i.e., after the enemy has been hit).
+        """
         # Calculate the health ratio to determine the width of the green health bar
         health_ratio = self.health / self.max_health
         # Health bar dimensions
@@ -1408,19 +1572,51 @@ class Enemy(pygame.sprite.Sprite):
 
 # This class is for a tile map's stage path finding, used with enemies
 class TileMap:
+    """
+    Utility class for parsing the string-array tilemap data into a grid. 
+    Provides methods for pathfinding algorithms to check tile type 
+    and connectivity.
+    """
     def __init__(self, tilemap_data: tuple[str]):
+        """
+        Initializes the TileMap with map data and calculates grid dimensions.
+
+        Args:
+            tilemap_data (tuple[str]): The grid data.
+        """
         self.data = tilemap_data
         # Map dimensions based on provided tile map data
         self.height = len(tilemap_data) 
         self.width = len(tilemap_data[0]) if self.height > 0 else 0
 
     def get_tile_char(self, x: int, y: int) -> Optional[str]:
+        """
+        Gets the character at the given grid coordinates.
+
+        Args:
+            x (int): The grid column index.
+            y (int): The grid row index.
+
+        Returns:
+            Optional[str]: The tile character ('W', 'P', '.') or None if out of bounds.
+        """
         # Get the character at the given grid coordinates, or None if out of bounds.
         if 0 <= y < self.height and 0 <= x < self.width:
             return self.data[y][x]
         return None
 
     def is_walkable(self, x: int, y: int) -> bool:
+        """
+        Checks if a given grid coordinate is within bounds and not an obstacle 
+        based on the NON_WALKABLE_CHARS list in config.py.
+
+        Args:
+            x (int): The grid column index.
+            y (int): The grid row index.
+
+        Returns:
+            bool: True if the tile is safe to walk on, False if it is an obstacle or out of bounds.
+        """
         # Check if a given grid coordinate is within bounds and not an obstacle.
         char = self.get_tile_char(x, y)
         # Check if coordinate is out of bound
@@ -1432,6 +1628,15 @@ class TileMap:
 
     # Gets valid neighboring grids (up, down, left, right) that are walkable
     def get_neighbors(self, node: GridNode) -> List[GridNode]:
+        """
+        Returns a list of valid, walkable neighboring grid nodes (up, down, left, right).
+
+        Args:
+            node (GridNode): The starting (x, y) grid coordinates.
+
+        Returns:
+            List[GridNode]: A list of reachable neighbor coordinates.
+        """
         x, y = node
         potential_neighbors = [
             (x + 1, y),  # Right
@@ -1448,6 +1653,17 @@ class TileMap:
 
 # A recursive function for finding a path from the enemy grid to the player grid using the BFS (Breadth-First Search) method.
 def find_path(tilemap: TileMap, start_node: GridNode, end_node: GridNode) -> Optional[List[GridNode]]:  
+    """
+    Finds the shortest path between two grid nodes using BFS algorithm.
+
+    Args:
+        tilemap (TileMap): The map structure used to check walkability.
+        start_node (GridNode): The enemy's starting (x, y) grid position.
+        end_node (GridNode): The player's target (x, y) grid position.
+
+    Returns:
+        Optional[List[GridNode]]: The shortest path from start_node to end_node as a list of nodes, or None if no path exists.
+    """
     if start_node == end_node:
         return [start_node]
         
@@ -1488,7 +1704,19 @@ def find_path(tilemap: TileMap, start_node: GridNode, end_node: GridNode) -> Opt
 
 #This class represent obstacle block sprites, and how they are updated throughout gameplay
 class Wall(pygame.sprite.Sprite):
+    """
+    Represents a solid, impassable wall or border object.
+    """
     def __init__(self, game: 'Game', x: int, y: int, stage_type: int):
+        """
+        Initializes a Wall sprite.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting grid column.
+            y (int): Starting grid row.
+            stage_type (int): Used to select the correct visual asset.
+        """
         self.game = game
         self.stage_type = stage_type
         self.groups = self.game.all_sprites, self.game.blocks
@@ -1520,7 +1748,19 @@ class Wall(pygame.sprite.Sprite):
 
 #This class represent a normal obstacle block sprites, such as rocks, and how they are updated throughout gameplay
 class Block(pygame.sprite.Sprite):
+    """
+    Represents a standard solid obstacle block (e.g., rocks).
+    """
     def __init__(self, game: 'Game', x: int, y: int, stage_type: int):
+        """
+        Initializes a Block sprite.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting grid column.
+            y (int): Starting grid row.
+            stage_type (int): Used to select the correct visual asset.
+        """
         self.game = game
         self.stage_type = stage_type
         self.groups = self.game.all_sprites, self.game.blocks
@@ -1552,7 +1792,22 @@ class Block(pygame.sprite.Sprite):
 
 #This class represent a geological obstacle sprites, such as lava, lakes, etc. and how they are updated throughout gameplay
 class Geo(pygame.sprite.Sprite):
+    """
+    Represents stage-unique environmental sprites like slippery ice, miasma, etc. 
+    Handles animation for miasma effects.
+    """
     def __init__(self, game: 'Game', x: int, y: int, stage_type: int, geo_type: int, geo_layer: int):
+        """
+        Initializes a Geo sprite, placing it into the correct collision/interaction group.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting grid column.
+            y (int): Starting grid row.
+            stage_type (int): The current stage (determines base sprite set).
+            geo_type (int): Specific type within the stage (e.g., 1=lava, 2=ice).
+            geo_layer (int): The drawing layer (e.g., GROUND_LAYER or BLOCK_LAYER).
+        """
         self.game = game
         self.stage_type = stage_type # each stage has different geo sprites: 1, 2, 3, etc.
         self.geo_type = geo_type # within each stage, geos can be different items like lakes, petals, etc. Valued as 1, 2, 3, etc.
@@ -1621,10 +1876,16 @@ class Geo(pygame.sprite.Sprite):
         self.rect.y = self.y
 
     def update(self):
+        """
+        Updates the Geo sprite (primarily used for animated elements like miasma).
+        """
         self.animate() # Call the animate method to change sprites for animation effect
 
     # Method for sprite's animation
     def animate(self):   
+        """
+        Cycles through the animation frames for Geo types that require it (e.g., Miasma).
+        """
         if self.stage_type == 4 and self.geo_type == 1:
             # Using 0.1 and math.floor allows us to move to the next sprite in the list every 10 frames (incrementing 0.1 per frame).   
             self.image = self.geo_animations[math.floor(self.animation_loop)]
@@ -1634,7 +1895,19 @@ class Geo(pygame.sprite.Sprite):
     
 #This class represent obstacle pitfall/hole sprites, and how they are updated throughout gameplay
 class Hole(pygame.sprite.Sprite):
+    """
+    Represents a dangerous pitfall or hole that acts as an impassable obstacle, but can be jumped over.
+    """
     def __init__(self, game: 'Game', x: int, y: int, stage_type: int):
+        """
+        Initializes a Hole sprite.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting grid column.
+            y (int): Starting grid row.
+            stage_type (int): Used to select the correct visual asset.
+        """
         self.stage_type = stage_type
         self.game = game
         self.groups = self.game.all_sprites, self.game.holes
@@ -1666,7 +1939,19 @@ class Hole(pygame.sprite.Sprite):
         
 #This class represent ground sprites, sprites the player traverses, and how they are updated throughout gameplay
 class Ground(pygame.sprite.Sprite):
+    """
+    Represents the non-collidable background tile (floor) of a stage.
+    """
     def __init__(self, game: 'Game', x: int, y: int, stage_type: int):
+        """
+        Initializes a Ground sprite.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting grid column.
+            y (int): Starting grid row.
+            stage_type (int): Used to select the correct visual asset (Grass, Ice, Fire, etc.).
+        """
         self.stage_type = stage_type
         self.game = game
         self._layer = GROUND_LAYER
@@ -1697,7 +1982,20 @@ class Ground(pygame.sprite.Sprite):
 
 #This class represent switch sprites (unlocks doors)
 class Switch(pygame.sprite.Sprite):
+    """
+    Represents a switch that the player must trigger to unlock doors. 
+    Supports 'normal' (permanent) and 'timed' (temporary) types.
+    """
     def __init__(self, game: 'Game', x: int, y: int, switch_type: str):
+        """
+        Initializes a Switch sprite.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting grid column.
+            y (int): Starting grid row.
+            switch_type (str): 'normal' or 'timed'.
+        """
         self._layer = BLOCK_LAYER
         self.game = game
         self.groups = self.game.all_sprites, self.game.switches, self.game.blocks
@@ -1723,6 +2021,9 @@ class Switch(pygame.sprite.Sprite):
 
     # update how the switch looks
     def update_image(self):
+        """
+        Updates the switch sprite to reflect its current ON/OFF state.
+        """
         if self.is_on and self.switch_type == 'normal':
             self.image = self.unlocked_image
         elif self.is_on and self.switch_type == 'timed':
@@ -1734,6 +2035,13 @@ class Switch(pygame.sprite.Sprite):
 
     # actions that occur on hit
     def on_hit(self) -> bool:
+        """
+        Handles the interaction when the switch is hit. 
+        Activates normal switches permanently or timed switches temporarily.
+
+        Returns:
+            bool: True if the switch state changed, False otherwise.
+        """
         if self.switch_type == 'normal' and not self.is_on:
             self.set_permanent_on()
             self.update_image()
@@ -1747,6 +2055,10 @@ class Switch(pygame.sprite.Sprite):
     
     # reset switch status
     def reset(self):
+        """
+        Resets a timed switch to its original (unhit) state if it is not 
+        set to permanent_on.
+        """
         if not self.permanent_on:
             self.is_on = False
             self.last_hit_time = 0
@@ -1754,6 +2066,10 @@ class Switch(pygame.sprite.Sprite):
         
     # set switch status as permanently on
     def set_permanent_on(self):
+        """
+        Sets the switch to a permanently ON state, typically used for normal switches 
+        or when timed switches are successfully combined.
+        """
         self.permanent_on = True
         self.is_on = True
         self.game.player.all_open == True
@@ -1761,7 +2077,20 @@ class Switch(pygame.sprite.Sprite):
 
 #This class represent door sprites (unlocked by switches)
 class Door(pygame.sprite.Sprite):
+    """
+    Represents a stage exit door, which acts as a block until its linked switches 
+    are all activated.
+    """
     def __init__(self, game: 'Game', x: int, y: int, linked_switches: list[Switch]):
+        """
+        Initializes a Door sprite.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting grid column.
+            y (int): Starting grid row.
+            linked_switches (list[Switch]): List of Switch objects required to unlock the door.
+        """
         self._layer = BLOCK_LAYER
         self.game = game
         self.groups = self.game.all_sprites, self.game.doors
@@ -1788,6 +2117,10 @@ class Door(pygame.sprite.Sprite):
         self.locked = True
 
     def update(self):
+        """
+        Checks the status of linked switches every frame. If all are permanently ON, 
+        the door unlocks and plays its opening animation.
+        """
         if self.locked:
             # Check if all linked switches are permenantly on; unlock door if they are
             all_on = True
@@ -1802,7 +2135,10 @@ class Door(pygame.sprite.Sprite):
                 self.open_animate()
 
     # Method for sprite's door opening animation
-    def open_animate(self):   
+    def open_animate(self):
+        """
+        Plays the door opening animation by cycling through the open_animations array.
+        """   
         # Using 0.1 and math.floor allows us to move to the next sprite in the list every 10 frames (incrementing 0.1 [per frame).
         while self.animation_loop < 4:
             self.image = self.open_animations[math.floor(self.animation_loop)]
@@ -1813,7 +2149,20 @@ class Door(pygame.sprite.Sprite):
 
 #This class represent a stage portal: it carries a different interaction with the player whether it is locked or not, and leads to various stages depending on stage number.
 class Portal(pygame.sprite.Sprite):
+    """
+    Represents a teleportation portal, either locked or unlocked, leading to different stages.
+    """
     def __init__(self, game: 'Game', x: int, y: int, stage_number: int, is_locked: bool):
+        """
+        Initializes a Portal sprite.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting grid column.
+            y (int): Starting grid row.
+            stage_number (int): The stage number the portal leads to (1-5).
+            is_locked (bool): True if the portal is currently inaccessible.
+        """
         self._layer = BLOCK_LAYER
         self.game = game
         self.is_locked = is_locked
@@ -1857,21 +2206,35 @@ class Portal(pygame.sprite.Sprite):
         self.animation_loop = 0
 
     def update(self):
+        """
+        Updates the portal's animation and checks for collision with the player 
+        if the portal is unlocked.
+        """
         self.animate() # Call the animate method to change sprites for animation effect
         if not self.is_locked:
             self.collide_player() # Call the collide_player method to detect if player touched unlocked portal
 
     # Method for sprite's animation
     def animate(self):   
+        """
+        Cycles through the portal animation frames.
+        """
         # Using 0.1 and math.floor allows us to move to the next sprite in the list every 10 frames (incrementing 0.1 per frame).   
         # If player is facing up, use the up-facing images for animation
-            self.image = self.portal_animation[math.floor(self.animation_loop)]
-            self.animation_loop += 0.1
-            if self.animation_loop >= PORTAL_FRAME_LIMIT:
-                self.animation_loop = 0 
+        self.image = self.portal_animation[math.floor(self.animation_loop)]
+        self.animation_loop += 0.1
+        if self.animation_loop >= PORTAL_FRAME_LIMIT:
+            self.animation_loop = 0 
 
     # Method for colliding with player
     def collide_player(self) -> bool:
+        """
+        Checks for player collision and triggers a stage change to the portal's 
+        destination stage number.
+
+        Returns:
+            bool: True if collision occurred and stage change was initiated.
+        """
         # checks if a player has collided with this portal
         hits_player = pygame.sprite.spritecollide(self, self.game.players, False)
         
@@ -1905,7 +2268,18 @@ class Portal(pygame.sprite.Sprite):
             
 #This class represent a player's normal attack
 class Attack(pygame.sprite.Sprite):
+    """
+    Represents the player's sprite for the normal (sword) attack.
+    """
     def __init__(self, game: 'Game', x: int, y: int):
+        """
+        Initializes the Attack sprite.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting pixel x-coordinate of the hitbox.
+            y (int): Starting pixel y-coordinate of the hitbox.
+        """
         self.game = game
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites, self.game.attacks
@@ -1954,11 +2328,18 @@ class Attack(pygame.sprite.Sprite):
 
     # Method for updating the game after an action, e.g. movement or attacking
     def update(self):
+        """
+        Updates the attack state: checks for collisions and advances the animation loop.
+        """
         self.collide() # Call the movement method to capture any coordinate changes.
         self.animate() # Call the animate method to change sprites for animation effect.
 
     # Method to check if attack collides with enemy
     def collide(self):
+        """
+        Checks for collision with enemies and switches. Deals damage and kills 
+        enemies on hit. Triggers switches.
+        """
         # checks if rectangle of attack sprite is colliding with rectangle of enemy's.
         enemy_hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
         switch_hits = pygame.sprite.spritecollide(self, self.game.switches, False)
@@ -1987,6 +2368,10 @@ class Attack(pygame.sprite.Sprite):
 
     # Method for attack sprite's animation
     def animate(self):
+        """
+        Advances the attack animation loop. Kills the attack sprite when the 
+        animation is complete to remove the hitbox.
+        """
         direction = self.game.player.facing # get the player's current direction to control the sprite choice
 
         # Use an animation sprites list depending on the direction player sprite is facing while moving: down, up, left, or right.
@@ -2022,7 +2407,20 @@ class Attack(pygame.sprite.Sprite):
 
 #This class represent a player's fireball spell
 class Fireball(pygame.sprite.Sprite):
+    """
+    Represents a ranged projectile spell. Moves in a fixed direction until collision.
+    """
     def __init__(self, game: 'Game', x: int, y: int, direction: str, is_from_explosion: bool = False):
+        """
+        Initializes the Fireball projectile.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting pixel x-coordinate.
+            y (int): Starting pixel y-coordinate.
+            direction (str): The direction of travel ('up', 'down', 'left', 'right').
+            is_from_explosion (bool): Flag if the fireball originated from an Explosion (used for logic separation).
+        """
         self.game = game
         self.direction = direction
         self._layer = PLAYER_LAYER
@@ -2069,6 +2467,9 @@ class Fireball(pygame.sprite.Sprite):
 
     # Method for updating the game after an action, e.g. movement or attacking
     def update(self):
+        """
+        Updates the fireball state: checks collision, advances animation, and moves the projectile.
+        """
         self.collide() # Call the movement method to capture any coordinate changes.
         self.animate() # Call the animate method to change sprites for animation effect.
 
@@ -2083,6 +2484,10 @@ class Fireball(pygame.sprite.Sprite):
 
     # Method to heck if fireball collides with enemy
     def collide(self):
+        """
+        Checks for collision with enemies, blocks, and switches. Deals damage to 
+        enemies, kills itself on any obstacle hit, and may destroy certain Geo blocks (ice).
+        """
         # checks if rectangle of fireball sprite is colliding with rectangle of enemy's.
         hits_enemy = pygame.sprite.spritecollide(self, self.game.enemies, False)
         switch_hits = pygame.sprite.spritecollide(self, self.game.switches, False)
@@ -2119,6 +2524,9 @@ class Fireball(pygame.sprite.Sprite):
 
     # Method for attack sprite's animation
     def animate(self):
+        """
+        Cycles through the fireball animation frames corresponding to its direction of travel.
+        """
         direction = self.game.player.facing # get the player's current direction to control the sprite choice
 
         # Use an animation sprites list depending on the direction player sprite is facing while moving: down, up, left, or right.
@@ -2154,7 +2562,21 @@ class Fireball(pygame.sprite.Sprite):
 
 #This class represent a player's Explosion spell
 class Explosion(pygame.sprite.Sprite):
+    """
+    Represents the class for the Explosion 
+    spell. It is a projectile that deals damage, 
+    and spawns four Fireball projectiles in 4 
+    cardinal directions upon collision.
+    """
     def __init__(self, game: 'Game', x: int, y: int):
+        """
+        Initializes the Explosion spell.
+
+        Args:
+            game (Game): Reference to the main Game instance.
+            x (int): Starting pixel x-coordinate.
+            y (int): Starting pixel y-coordinate.
+        """
         self.game = game
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites, self.game.explosions
@@ -2199,6 +2621,10 @@ class Explosion(pygame.sprite.Sprite):
 
     # Method for updating the game after an action, e.g. movement or attacking
     def update(self):
+        """
+        Updates the explosion state: checks collision, advances animation, and determines 
+        if the spell should expire and spawn Fireballs.
+        """
         self.collide() # Call the movement method to capture any coordinate changes.
         self.animate() # Call the animate method to change sprites for animation effect.
 
@@ -2215,6 +2641,10 @@ class Explosion(pygame.sprite.Sprite):
 
     # Method to heck if fireball collides with enemy
     def collide(self):
+        """
+        Checks for collision with targets. Deals damage, spawns 4 Fireballs 
+        in cardinal directions, and kills itself.
+        """
         # checks if rectangle of fireball sprite is colliding with rectangle of enemy's.
         hits_enemy = pygame.sprite.spritecollide(self, self.game.enemies, False)
         switch_hits = pygame.sprite.spritecollide(self, self.game.switches, False)
@@ -2272,6 +2702,9 @@ class Explosion(pygame.sprite.Sprite):
 
     # Method for attack sprite's animation
     def animate(self):
+        """
+        Cycles through the explosion animation frames.
+        """
         direction = self.game.player.facing # get the player's current direction to control the sprite choice
 
         # Use an animation sprites list depending on the direction player sprite is facing while moving: down, up, left, or right.
